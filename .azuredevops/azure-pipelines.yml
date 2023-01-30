@@ -1,0 +1,44 @@
+trigger:
+  branches:
+    include:
+    - main
+    - feature/*
+  paths:
+    include:
+    - Dockerfile
+    - start.sh
+
+parameters:
+- name: environmentType
+  type: string
+  default: dev
+
+stages:
+- stage: BuildAndPush
+  displayName: Build and Push Self Hosted Agent image
+  jobs:
+  - deployment: DeployAcrImage
+    displayName: Deploy Acr and BuildPush image
+    pool:
+      vmImage: ubuntu-latest
+    variables:
+    - group: jeroennietdoen${{ parameters.environmentType }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - checkout: self
+
+            - task: AzureResourceManagerTemplateDeployment@3
+              name: DeployBicepFile
+              displayName: Deploy Bicep file
+              inputs:
+                connectedServiceName: jeroennietdoen${{parameters.environmentType}}
+                deploymentName: $(Build.BuildNumber)
+                location: 'West Europe'
+                resourceGroupName: $(ResourceGroupName)
+                csmFile: deploy/main.bicep
+                overrideParameters: >
+                  -environmentType $(EnvironmentType)
+                deploymentOutputs: deploymentOutputs
+

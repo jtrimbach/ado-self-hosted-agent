@@ -1,4 +1,10 @@
-param AcrName string = 'acr${uniqueString(resourceGroup().id)}'
+@allowed([
+  'dev'
+  'prd'
+])
+param environmentType string
+
+param AcrName string = '${environmentType}acr${uniqueString(resourceGroup().id)}'
 param location string = resourceGroup().location
 
 param imageName string = 'sample/dockeragent'
