@@ -14,7 +14,11 @@ resource acr 'Microsoft.ContainerRegistry/registries@2022-02-01-preview' = {
   name: AcrName
   location: location
   sku: {
-    name: 'Basic'
+    name: 'Premium'
+  }
+  properties: {
+    publicNetworkAccess: 'Disabled'
+    networkRuleBypassOptions: 'AzureServices'
   }
 }
 
