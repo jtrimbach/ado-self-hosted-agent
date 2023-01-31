@@ -23,6 +23,7 @@ stages:
       vmImage: ubuntu-latest
     variables:
     - group: jeroennietdoen${{ parameters.environmentType }}
+    environment: ${{parameters.environmentType}}
     strategy:
       runOnce:
         deploy:
